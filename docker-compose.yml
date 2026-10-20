@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: lainaamo_db_3004
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-salasana}"
+      POSTGRES_DB: "${POSTGRES_DB:-lainaamo}"
+    # Jos koneella on jo oma Postgres portissa 5432, aseta DB_PORT joksikin muuksi
+    ports:
+      - "${DB_PORT:-5432}:5432" # host:container
+    volumes:
+      # Postgres 18 vaatii mountin tähän, EI polkuun /var/lib/postgresql/data
+      - lainaamo_data_3004:/var/lib/postgresql
+      # Tämän kansion skriptit ajetaan kerran, kun kanta luodaan ensimmäisen kerran
+      - ./docker/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  lainaamo_data_3004:
