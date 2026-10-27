@@ -1,6 +1,5 @@
 
 import abc
-from typing import List
 
 import models
 from dtos.categories import CreateCategoryReq
@@ -8,7 +7,7 @@ from dtos.categories import CreateCategoryReq
 
 class ABCCategoryService(abc.ABC):
     @abc.abstractmethod
-    def get_all(self) -> List[models.Category]:
+    def get_all(self) -> list[models.Category]:
         raise NotImplementedError()  # pragma: no cover
 
     @abc.abstractmethod

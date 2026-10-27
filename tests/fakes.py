@@ -1,5 +1,4 @@
 
-from typing import List
 
 import models
 from dtos.categories import CreateCategoryReq
@@ -9,11 +8,11 @@ from services.abc_category_service import ABCCategoryService
 class FakeCategoryService(ABCCategoryService):
     # Konstruktorin kautta säädetään, miten fake käyttäytyy.
     # Näin sama luokka kelpaa moneen eri testiin.
-    def __init__(self, categories: List[models.Category] = None, raises: Exception = None):
+    def __init__(self, categories: list[models.Category] | None = None, raises: Exception | None = None):
         self._categories = categories or []
         self._raises = raises
 
-    def get_all(self) -> List[models.Category]:
+    def get_all(self) -> list[models.Category] :
         return self._categories
 
     def get_by_id(self, _id: int) -> models.Category:
