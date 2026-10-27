@@ -1,18 +1,45 @@
 
+# Workflow-tiedoston nimi, joka näkyy GitHubin Actions-välilehdellä
 name: CI
 
-
+# Määritellään, milloin tämä workflow käynnistyy
 on:
+  # Ajetaan, kun mainiin pushataan (esim. kun PR mergetään)
   push:
-    branches:
-      - main
+    # Rajataan push-tapahtumat koskemaan vain main-haaraa
+    branches: [main]
+  # Ajetaan, kun pull request avataan tai siihen pushataan uusia committeja
   pull_request:
-    branches:
-      - main
+    # Vain pull requestit, joiden kohteena on main
+    branches: [main]
 
+# Jobit ovat workflow'n itsenäisiä osia, jotka ajetaan omilla virtuaalikoneillaan
 jobs:
-  test:
+  # Lint-job: koodin tyylin ja yleisten virheiden tarkistus (lint)
+  lint:
+    # Jobin nimi, joka näkyy GitHubissa (ja branch protection -asetuksissa)
+    name: Lint
+    # Job ajetaan GitHubin tarjoamalla Ubuntu-koneella
     runs-on: ubuntu-latest
+    # Stepit ajetaan järjestyksessä ylhäältä alas; name näkyy lokissa stepin otsikkona
     steps:
-      - name: Hello World
-        run: echo "Hello World!"
+      # Haetaan repositorion koodi virtuaalikoneelle
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Asennetaan Python virtuaalikoneelle
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        # Annetaan asetukset setup-python-actionille
+        with:
+          # Käytettävä Python-versio (kannattaa olla sama kuin omalla koneella)
+          python-version: "3.13"
+
+      # Asennetaan kehitystyökalut, joiden joukossa on ruff. Ruffin versio on lukittu
+      # requirements-dev.txt:ssä, jotta uusi julkaisu ei tuo uusia sääntöjä ja kaada CI:tä
+      - name: Install Dependencies
+        run: pip install -r requirements-dev.txt
+
+      # Ajetaan ruff projektikansiossa; virheet kaatavat jobin
+      - name: Run Ruff
+        run: ruff check .

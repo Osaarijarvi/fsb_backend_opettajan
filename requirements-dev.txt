@@ -1,0 +1,6 @@
+# Asennus: pip install -r requirements.txt -r requirements-dev.txt
+
+# testikattavuuden mittaaminen
+coverage
+# linteri; versio lukitaan, jotta omalla koneella ja CI:ssä tarkistetaan samat säännöt
+ruff==0.17.2

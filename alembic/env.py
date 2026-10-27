@@ -14,7 +14,9 @@ import os
 
 from dotenv import load_dotenv
 
-import models
+# noqa = no quality assurance, ei jää kiinni testissä.
+# Koodi tarkentaa, mikä virhe jätetään tarkistamatta.
+import models # noqa: F401
 from db import Base
 
 load_dotenv()
