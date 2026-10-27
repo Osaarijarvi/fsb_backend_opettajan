@@ -1,5 +1,4 @@
 
-from typing import List
 
 from sqlalchemy.orm import Session
 
@@ -14,7 +13,7 @@ class CategoryService(ABCCategoryService):
     def __init__(self, _repository: Session):
         self._repository = _repository
 
-    def get_all(self) -> List[models.Category]:
+    def get_all(self) -> list[models.Category]:
         return self._repository.query(models.Category).all()
 
     def get_by_id(self, _id: int) -> models.Category:

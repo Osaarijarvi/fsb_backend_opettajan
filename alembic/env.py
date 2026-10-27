@@ -1,7 +1,6 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
@@ -14,9 +13,8 @@ import os
 
 from dotenv import load_dotenv
 
-# noqa = no quality assurance, ei jää kiinni testissä.
 # Koodi tarkentaa, mikä virhe jätetään tarkistamatta.
-import models # noqa: F401
+import models  # noqa: F401
 from db import Base
 
 load_dotenv()

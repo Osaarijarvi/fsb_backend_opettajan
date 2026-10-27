@@ -1,10 +1,9 @@
 
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 import dtos.categories
-import models
 from custom_exceptions.not_found_exception import NotFoundException
 from factories.services import category_service_factory
 from services.abc_category_service import ABCCategoryService
@@ -27,7 +26,7 @@ CategoryServ = Annotated[ABCCategoryService, Depends(category_service_factory)]
     #return categories
 
 @router.get('/')
-def get_all(_service: CategoryServ) -> List[dtos.categories.CategoryDto]:
+def get_all(_service: CategoryServ) -> list[dtos.categories.CategoryDto]:
     return _service.get_all()
 
 
