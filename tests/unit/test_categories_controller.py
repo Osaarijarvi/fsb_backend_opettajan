@@ -3,8 +3,6 @@ import unittest
 
 from fastapi.testclient import TestClient
 
-import models
-from custom_exceptions.not_found_exception import NotFoundException
 from factories.services import category_service_factory
 from main import app
 from tests.fakes import FakeCategoryService

@@ -1,6 +1,8 @@
+#from sqlalchemy.sql.annotation import Annotated
+from typing import Annotated
+
 from fastapi import Depends
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.annotation import Annotated
 
 from db import get_db
 from services.category_service import CategoryService
