@@ -3,10 +3,12 @@ import unittest
 
 from fastapi.testclient import TestClient
 
+from dtos.categories import CreateCategoryReq
 from factories.services import category_service_factory
 from main import app
 from tests.fakes import FakeCategoryService
-
+import models
+from custom_exceptions.business_rule_exception import BusinessRuleException
 
 class CategoriesControllerTests(unittest.TestCase):
 
@@ -32,6 +34,15 @@ class CategoriesControllerTests(unittest.TestCase):
         response = self.client.post('/api/categories/', json={'name': 'K'})
 
         self.assertEqual(422, response.status_code)
+
+
+
+    def test_delete_returns_204(self):
+        app.dependency_overrides[category_service_factory] = lambda: FakeCategoryService()
+
+        response = self.client.delete('/api/categories/1')
+
+        self.assertEqual(204, response.status_code)
 
 
 if __name__ == '__main__':
