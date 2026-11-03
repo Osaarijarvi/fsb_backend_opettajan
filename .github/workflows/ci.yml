@@ -43,3 +43,87 @@ jobs:
       # Ajetaan ruff projektikansiossa; virheet kaatavat jobin
       - name: Run Ruff
         run: ruff check .
+
+  # Test-job: testien ajaminen oikeaa Postgres-tietokantaa vasten
+  test:
+    # Jobin nimi, joka näkyy GitHubissa (ja branch protection -asetuksissa)
+    name: Tests
+    # Testit ajetaan GitHubin tarjoamalla Ubuntu-koneella
+    runs-on: ubuntu-latest
+    # Testit ajetaan vasta, kun lint-job on mennyt läpi
+    needs: lint
+
+    # Service containerit ovat apupalveluita (kuten tietokanta), jotka käynnistyvät jobin ajaksi
+    services:
+      # Palvelun nimi; vastaa docker-compose.yml:n db-palvelua
+      postgres:
+        # Sama Postgres-image kuin docker-compose.yml:ssä
+        image: postgres:18-alpine
+        # Ympäristömuuttujat, joilla Postgres-kontti alustetaan
+        env:
+          # Tietokannan käyttäjätunnus
+          POSTGRES_USER: postgres
+          # Salasana; tämä on vain CI:tä varten, ei tuotannon salasana
+          POSTGRES_PASSWORD: postgres
+          # Luodaan suoraan testikanta, koska CI:ssä ei tarvita kehityskantaa
+          POSTGRES_DB: lainaamo_test
+        # Avataan kontin portti 5432 virtuaalikoneen porttiin 5432 (host:container)
+        ports:
+          # Muoto on sama kuin docker-compose.yml:ssä
+          - 5432:5432
+        # Odotetaan, että tietokanta on valmis ennen kuin stepit alkavat
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # Ympäristömuuttujat, jotka ovat käytössä kaikissa tämän jobin stepeissä
+    env:
+      # db.py ja alembic/env.py lukevat tietokannan osoitteen tästä muuttujasta.
+      # Tarvitaan myös yksikkötesteissä, koska db.py luo enginen jo importattaessa
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/lainaamo_test
+      # Testejä varten keksitty avain; oikea avain kuuluu GitHubin Secretsiin
+      TOKEN_KEY: cita-varten-tekaistu-avain
+
+    # Testijobin stepit; name näkyy Actions-välilehden lokissa stepin otsikkona
+    steps:
+      # Haetaan repositorion koodi virtuaalikoneelle
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Asennetaan Python virtuaalikoneelle
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        # Annetaan asetukset setup-python-actionille
+        with:
+          # Sama Python-versio kuin lint-jobissa
+          python-version: "3.13"
+          # Tallennetaan pip-paketit välimuistiin, jolloin seuraavat ajot ovat nopeampia
+          cache: pip
+          # Välimuisti tyhjennetään, kun jompikumpi riippuvuustiedosto muuttuu
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      # Asennetaan sovelluksen riippuvuudet sekä kehitystyökalut (coverage, ruff)
+      - name: Install Dependencies
+        # | tarkoittaa, että run-kohtaan voi kirjoittaa useita komentoja omille riveilleen
+        run: |
+          python -m pip install -U pip wheel
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      # Ajetaan yksikkötestit coveragen kautta, jotta saadaan tietää testikattavuus.
+      # discover etsii -s-kansiosta test*.py-tiedostot; -t . tekee projektin juuresta
+      # lähtökansion, jolloin importit (esim. tests.integration.base) toimivat
+      - name: Run Unit Tests
+        run: coverage run -m unittest discover -s tests/unit -t .
+
+      # Ajetaan integraatiotestit; --append lisää kattavuuden yksikkötestien tuloksiin
+      - name: Run Integration Tests
+        run: coverage run --append -m unittest discover -s tests/integration -t .
+
+      # Tulostetaan molempien testiajojen yhteinen kattavuusraportti jobin lokiin
+      - name: Coverage Report
+        run: coverage report
