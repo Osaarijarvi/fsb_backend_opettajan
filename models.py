@@ -1,12 +1,8 @@
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from sqlalchemy import ForeignKey, Integer, Text, text
-
-from typing import List, Optional
+from sqlalchemy import Integer, Text, text
+from sqlalchemy.orm import Mapped, mapped_column
 
 from db import Base
-
 
 
 class Category(Base):
