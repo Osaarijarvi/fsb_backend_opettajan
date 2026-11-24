@@ -14,6 +14,6 @@ OpenSASession = Annotated[Session, Depends(get_db)]
 def category_service_factory(_repository: OpenSASession) -> CategoryService:
     return CategoryService(_repository)
 
-
+# korjaus?
 def user_service_factory(_repository: OpenSASession) -> UserService:
     return UserService(_repository)
