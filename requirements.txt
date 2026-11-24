@@ -1,14 +1,14 @@
 
 # restapi framework
-fastapi[standard]
+fastapi[standard]~=0.153.0
 # ORM Relational
-sqlalchemy
+sqlalchemy~=2.1.5
 # migraatiotyökalu
-alembic
+alembic~=1.20.0
 # pythonin postgres-ajuri
 psycopg2-binary
 # luetaan ympäristömuuttujia
-python-dotenv
+python-dotenv~=1.2.4
 # hashataan
 passlib
 #
@@ -16,3 +16,4 @@ argon2-cffi
 #
 pyjwt[crypto]
 coverage
+pydantic~=2.14.1

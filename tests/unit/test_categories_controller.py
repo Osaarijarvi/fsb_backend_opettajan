@@ -34,5 +34,14 @@ class CategoriesControllerTests(unittest.TestCase):
         self.assertEqual(422, response.status_code)
 
 
+
+    def test_delete_returns_204(self):
+        app.dependency_overrides[category_service_factory] = lambda: FakeCategoryService()
+
+        response = self.client.delete('/api/categories/1')
+
+        self.assertEqual(204, response.status_code)
+
+
 if __name__ == '__main__':
     unittest.main()
