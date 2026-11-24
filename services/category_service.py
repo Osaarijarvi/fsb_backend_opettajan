@@ -3,10 +3,10 @@
 from sqlalchemy.orm import Session
 
 import models
+from custom_exceptions.business_rule_exception import BusinessRuleException
 from custom_exceptions.not_found_exception import NotFoundException
 from dtos.categories import CreateCategoryReq
 from services.abc_category_service import ABCCategoryService
-from custom_exceptions.business_rule_exception import BusinessRuleException
 
 
 class CategoryService(ABCCategoryService):

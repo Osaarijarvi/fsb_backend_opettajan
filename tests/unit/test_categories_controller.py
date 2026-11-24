@@ -3,12 +3,10 @@ import unittest
 
 from fastapi.testclient import TestClient
 
-from dtos.categories import CreateCategoryReq
 from factories.services import category_service_factory
 from main import app
 from tests.fakes import FakeCategoryService
-import models
-from custom_exceptions.business_rule_exception import BusinessRuleException
+
 
 class CategoriesControllerTests(unittest.TestCase):
 

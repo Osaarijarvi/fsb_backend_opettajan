@@ -4,10 +4,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 import dtos.categories
+from custom_exceptions.business_rule_exception import BusinessRuleException
 from custom_exceptions.not_found_exception import NotFoundException
 from factories.services import category_service_factory
 from services.abc_category_service import ABCCategoryService
-from custom_exceptions.business_rule_exception import BusinessRuleException
 
 router = APIRouter(prefix='/api/categories', tags=['categories'])
 

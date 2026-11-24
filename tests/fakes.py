@@ -3,6 +3,7 @@
 import models
 from dtos.categories import CreateCategoryReq
 from services.abc_category_service import ABCCategoryService
+from services.abc_user_service import ABCUserService
 
 
 class FakeCategoryService(ABCCategoryService):
@@ -31,3 +32,17 @@ class FakeCategoryService(ABCCategoryService):
     def delete(self, _id: int) -> None:
         if self._raises:
             raise self._raises
+
+
+class FakeUserService(ABCUserService):
+    def __init__(self, user: models.User | None = None, raises: Exception | None  = None):
+        self._user = user
+        self._raises = raises
+
+    def register(self, username: str, password: str) -> models.User:
+        if self._raises:
+            raise self._raises
+        return self._user
+
+    def get_user_by_username(self, username: str) -> models.User | None:
+        return self._user
