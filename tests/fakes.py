@@ -46,3 +46,11 @@ class FakeUserService(ABCUserService):
 
     def get_user_by_username(self, username: str) -> models.User | None:
         return self._user
+
+    def login(self, username: str, password: str) -> str:
+        if self._raises:
+            raise self._raises
+        return 'fake-token'
+
+    def get_user_by_access_token(self, access_token: str) -> models.User | None:
+        return self._user
